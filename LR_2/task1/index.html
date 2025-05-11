@@ -94,12 +94,48 @@
             </li>
             <li class="drac-box">
                 <a href="../.."
-                    class=" active 
+                    class="
                     drac-anchor btn-toggle d-inline-flex align-items-center border-0 drac-text-purple--hover collapsed"
                     data-bs-toggle="collapse" data-bs-target="#практическая-работа-№1-collapse" aria-expanded="false">
                     Практическая работа №1
                 </a>
                 <div class="collapse" id="практическая-работа-№1-collapse">
+                    <ul class="mb-5 drac-list drac-list-none">
+                            
+    <li class="drac-box-ternary">
+        <a href="../../PR_1/task1/"
+            class="
+            drac-anchor d-inline-flex align-items-center border-0 drac-text-purple--hover">
+            Задание 1
+        </a>
+    </li>
+                            
+    <li class="drac-box-ternary">
+        <a href="../../PR_1/task2/"
+            class="
+            drac-anchor d-inline-flex align-items-center border-0 drac-text-purple--hover">
+            Задание 2
+        </a>
+    </li>
+                            
+    <li class="drac-box-ternary">
+        <a href="../../PR_1/task3/"
+            class="
+            drac-anchor d-inline-flex align-items-center border-0 drac-text-purple--hover">
+            Задание 3
+        </a>
+    </li>
+                    </ul>
+                </div>
+            </li>
+            <li class="drac-box">
+                <a href="../.."
+                    class=" active 
+                    drac-anchor btn-toggle d-inline-flex align-items-center border-0 drac-text-purple--hover collapsed"
+                    data-bs-toggle="collapse" data-bs-target="#лабораторная-работа-№2-collapse" aria-expanded="false">
+                    Лабораторная работа №2
+                </a>
+                <div class="collapse" id="лабораторная-работа-№2-collapse">
                     <ul class="mb-5 drac-list drac-list-none">
                             
     <li class="drac-box-ternary">
@@ -112,42 +148,6 @@
                             
     <li class="drac-box-ternary">
         <a href="../task2/"
-            class="
-            drac-anchor d-inline-flex align-items-center border-0 drac-text-purple--hover">
-            Задание 2
-        </a>
-    </li>
-                            
-    <li class="drac-box-ternary">
-        <a href="../task3/"
-            class="
-            drac-anchor d-inline-flex align-items-center border-0 drac-text-purple--hover">
-            Задание 3
-        </a>
-    </li>
-                    </ul>
-                </div>
-            </li>
-            <li class="drac-box">
-                <a href="../.."
-                    class="
-                    drac-anchor btn-toggle d-inline-flex align-items-center border-0 drac-text-purple--hover collapsed"
-                    data-bs-toggle="collapse" data-bs-target="#лабораторная-работа-№2-collapse" aria-expanded="false">
-                    Лабораторная работа №2
-                </a>
-                <div class="collapse" id="лабораторная-работа-№2-collapse">
-                    <ul class="mb-5 drac-list drac-list-none">
-                            
-    <li class="drac-box-ternary">
-        <a href="../../LR_2/task1/"
-            class="
-            drac-anchor d-inline-flex align-items-center border-0 drac-text-purple--hover">
-            Задание 1
-        </a>
-    </li>
-                            
-    <li class="drac-box-ternary">
-        <a href="../../LR_2/task2/"
             class="
             drac-anchor d-inline-flex align-items-center border-0 drac-text-purple--hover">
             Задание 2
@@ -184,7 +184,7 @@
         <div class="container">
             <div class="row row-preview">
                 <div class="col">
-                    <a href="../../LR_1/task/"
+                    <a href="../../PR_1/task3/"
                         class="btn-preview drac-btn drac-btn-outline drac-text-white drac-text-cyan-green--hover">
                         <i class="fa fa-arrow-left"></i> Previous
                     </a>
@@ -227,61 +227,113 @@
             <!-- block content -->
                 <section class="p-md-5 section-content">
     <article>
-        <p><h1 id="11-fastapi">Практика 1.1. Создание базового приложения на FastAPI</h1>
-<h3 id="_1">Ход работы</h3>
-<ol>
-<li>Устанавливаем FastAPI</li>
-</ol>
-<p><img alt="Alt текст" src="../images_1/1.png" /></p>
-<p>2.В файле main.py пишем следующий код:</p>
-<pre><code>from fastapi import FastAPI
+        <p><h2 id="no1-threading-multiprocessing-async-python">Задание №1. Различия между threading, multiprocessing и async в Python</h2>
+<h3 id="_1">Цель:</h3>
+<p>В рамках данного задания необходимо было написать три различных программы на Python, использующие каждый из подходов: threading, multiprocessing и async. 
+Каждая программа должна считать сумму всех чисел от 1 до 10^9.</p>
+<h3 id="_2">Ход работы:</h3>
+<p>Рассмотрим реализацию каждого подхода:</p>
+<p>1.Threading. Через строго равные промежутки времени происходит попеременное переключение то на одну, то на другую задачу. </p>
+<pre><code>import threading
+import time
 
-app = FastAPI()
+def partial_sum(start, end, result, index):
+    result[index] = sum(range(start, end))
 
+def calculate_sum():
+    num_threads = 4
+    maximum = 10**9
+    step = maximum // num_threads
+    threads = []
+    results = [0] * num_threads
+    for i in range(num_threads):
+        start = i * step + 1
+        if i != num_threads - 1:
+            end = (i + 1) * step + 1
+        else:
+            end = maximum + 1
+        t = threading.Thread(target=partial_sum, args=(start, end, results, i))
+        threads.append(t)
+        t.start()
+    for t in threads:
+        t.join()
+    return sum(results)
+</code></pre>
+<p>В результате получаем:</p>
+<p><img alt="Alt текст" src="../images/6.png" /></p>
+<p>2.Multiprocessing. Вычисления идут параллельно</p>
+<pre><code>import multiprocessing
+import time
 
-@app.get(&quot;/&quot;)
-def hello():
-    return &quot;Hello, [username]!&quot;
+def partial_sum(start, end, result, index):
+    result[index] = sum(range(start, end))
+
+def calculate_sum():
+    num_processes = multiprocessing.cpu_count()
+    maximum = 10**9
+    step = maximum // num_processes
+    manager = multiprocessing.Manager()
+    processes = []
+    results = manager.list([0] * num_processes)
+
+    for i in range(num_processes):
+        start = i * step + 1
+        if i != num_processes - 1:
+            end = (i + 1) * step + 1
+        else:
+            end = maximum + 1
+        process = multiprocessing.Process(target=partial_sum, args=(start, end, results, i))
+        processes.append(process)
+        process.start()
+
+    for process in processes:
+        process.join()
+
+    return sum(results)
 </code></pre>
-<p>Запускаем сервер и смотрим на результат:</p>
-<pre><code>uvicorn main:app --reload
+<p>Сначала посомтрим на результаты при стандартном наборе входных параметров:
+<img alt="Alt текст" src="../images/7.png" /></p>
+<p>Далее в рамках этого подхода проведем небольшое исследование. Попробуем посомтреть на изменение работы кода при корректировке переменной num_processes, которая как раз-таки распределяет наш процесс на потоки.
+Начнем с 4х ядер:
+<img alt="Alt текст" src="../images/1.png" /></p>
+<p><img alt="Alt текст" src="../images/4.png" /></p>
+<p>А затем посмотрим на 8 ядер (максимальное количество):
+<img alt="Alt текст" src="../images/3.png" /></p>
+<p><img alt="Alt текст" src="../images/2.png" /></p>
+<p>Можно сразу заметить сильный разброс во времени и в суммарной нагрузке на ЦП. Увеличив величив num_processes с 4 до 8, мы задействовали все ядра (и производительности, и эффективности). Время работы сильно сократилось, а это значит, что наша задача хорошо масштабируется по ядрам и реально выигрывает при использоании multiprocessing.</p>
+<p>3.Asyncio</p>
+<pre><code>import asyncio
+import time
+
+async def partial_sum(start, end):
+    return sum(range(start, end))
+
+async def calculate_sum():
+    num_tasks = 4
+    maximum = 10 ** 9
+    step = maximum // num_tasks
+    tasks = []
+
+    for i in range(num_tasks):
+        start = i * step + 1
+        if i != num_tasks - 1:
+            end = (i + 1) * step + 1
+        else:
+            end = maximum + 1
+        task = asyncio.create_task(partial_sum(start, end))
+        tasks.append(task)
+
+    results = await asyncio.gather(*tasks)
+    return sum(results)
 </code></pre>
-<p><img alt="Alt текст" src="../images_1/3.png" /></p>
-<p><img alt="Alt текст" src="../images_1/2.png" /></p>
-<p>3.Созаддим временную бд прямо в файле main.py </p>
-<pre><code>temp_bd = [{
-    &quot;id&quot;: 1,
-    &quot;race&quot;: &quot;director&quot;,
-    &quot;name&quot;: &quot;Мартынов Дмитрий&quot;,
-    &quot;level&quot;: 12,
-    &quot;profession&quot;: {
-        &quot;id&quot;: 1,
-        &quot;title&quot;: &quot;Влиятельный человек&quot;,
-        &quot;description&quot;: &quot;Эксперт по всем вопросам&quot;
-    },
-},
-    {
-        &quot;id&quot;: 2,
-        &quot;race&quot;: &quot;worker&quot;,
-        &quot;name&quot;: &quot;Андрей Косякин&quot;,
-        &quot;level&quot;: 12,
-        &quot;profession&quot;: {
-            &quot;id&quot;: 1,
-            &quot;title&quot;: &quot;Дельфист-гребец&quot;,
-            &quot;description&quot;: &quot;Уважаемый сотрудник&quot;
-        },
-    },
-]
-</code></pre>
-<p>И для новой бд напишем запросы:
-<img alt="Alt текст" src="../images_1/4.png" /></p>
-<p>4.Тестируем написанные запросы, вновь запускаем сервер и смотрим на результат:
-<img alt="Alt текст" src="../images_1/5.png" /></p>
-<p><img alt="Alt текст" src="../images_1/6.png" /></p>
-<p><img alt="Alt текст" src="../images_1/7.png" /></p>
-<p><img alt="Alt текст" src="../images_1/8.png" /></p>
-<p><img alt="Alt текст" src="../images_1/9.png" /></p>
-<p><img alt="Alt текст" src="../images_1/10.png" /></p></p>
+<p>В результате получаем:</p>
+<p><img alt="Alt текст" src="../images/5.png" /></p>
+<p>Теперь посомтрим на график распределения времени для каждого процесса при 10^9 и 4х потоках:</p>
+<p><img alt="Alt текст" src="../images/8.png" /></p>
+<h3 id="_3">Вывод:</h3>
+<p>Multiprocessing получился самым эффективным способом в рамках задачи. В Python есть ограничение, называемое GIL, которое мешает потокам работать одновременно. Но процессы в multiprocessing GIL не ограничивает, поэтому это круто работает для тяжёлых задач — типа вычислений, обработки видео или изображений. Также каждый процесс может параллельно использовать ядра процессора. В результате — значительное ускорение.</p>
+<p>Threadings занимает второе место. Достаточно медленный из-за GIL. Тут параллельности нет (и ускорения тоже), в итоге задачи исполняются по очереди.</p>
+<p>Async - третье место. Тут тоже идет последовательное исполнение, нет ускорения, ну и асинхронность в нашей задаче ничего не даёт, потому что нет операций, которые можно "ждать". </p></p>
     </article>
 </section>
             <!-- endblock -->
