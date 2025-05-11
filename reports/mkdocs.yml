@@ -7,5 +7,8 @@ nav:
    - Задание 1: PR_1/task1.md
    - Задание 2: PR_1/task2.md
    - Задание 3: PR_1/task3.md
+ - Лабораторная работа №2:
+   - Задание 1: LR_2/task1.md
+   - Задание 2: LR_2/task2.md
 theme:
  name: dracula
