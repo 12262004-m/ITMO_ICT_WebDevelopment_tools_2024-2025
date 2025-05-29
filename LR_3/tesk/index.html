@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-        <title>Задание 1 - Отчет к лабораторным работам по курсу "WEB-программирование", 2 семестр</title>
+        <title>Tesk - Отчет к лабораторным работам по курсу "WEB-программирование", 2 семестр</title>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -130,7 +130,7 @@
             </li>
             <li class="drac-box">
                 <a href="../.."
-                    class=" active 
+                    class="
                     drac-anchor btn-toggle d-inline-flex align-items-center border-0 drac-text-purple--hover collapsed"
                     data-bs-toggle="collapse" data-bs-target="#лабораторная-работа-№2-collapse" aria-expanded="false">
                     Лабораторная работа №2
@@ -139,15 +139,15 @@
                     <ul class="mb-5 drac-list drac-list-none">
                             
     <li class="drac-box-ternary">
-        <a href="./"
-            class=" active 
+        <a href="../../LR_2/task1/"
+            class="
             drac-anchor d-inline-flex align-items-center border-0 drac-text-purple--hover">
             Задание 1
         </a>
     </li>
                             
     <li class="drac-box-ternary">
-        <a href="../task2/"
+        <a href="../../LR_2/task2/"
             class="
             drac-anchor d-inline-flex align-items-center border-0 drac-text-purple--hover">
             Задание 2
@@ -167,7 +167,7 @@
                     <ul class="mb-5 drac-list drac-list-none">
                             
     <li class="drac-box-ternary">
-        <a href="../../LR_3/task.md"
+        <a href="../task.md"
             class="
             drac-anchor d-inline-flex align-items-center border-0 drac-text-purple--hover">
             Задание
@@ -201,22 +201,6 @@
                     <!-- block preview -->
                     <li class="nav-item">
                             
-        <div class="container">
-            <div class="row row-preview">
-                <div class="col">
-                    <a href="../../PR_1/task3/"
-                        class="btn-preview drac-btn drac-btn-outline drac-text-white drac-text-cyan-green--hover">
-                        <i class="fa fa-arrow-left"></i> Previous
-                    </a>
-                </div>
-                <div class="col">
-                    <a href="../task2/"
-                        class="btn-preview drac-btn drac-btn-outline drac-text-white drac-text-cyan-green--hover" style="padding-left: 3%;">
-                        Next <i class="fa fa-arrow-right"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
                     </li>
                     <!--  endblock -->
 
@@ -247,113 +231,223 @@
             <!-- block content -->
                 <section class="p-md-5 section-content">
     <article>
-        <p><h2 id="no1-threading-multiprocessing-async-python">Задание №1. Различия между threading, multiprocessing и async в Python</h2>
-<h3 id="_1">Цель:</h3>
-<p>В рамках данного задания необходимо было написать три различных программы на Python, использующие каждый из подходов: threading, multiprocessing и async. 
-Каждая программа должна считать сумму всех чисел от 1 до 10^9.</p>
-<h3 id="_2">Ход работы:</h3>
-<p>Рассмотрим реализацию каждого подхода:</p>
-<p>1.Threading. Через строго равные промежутки времени происходит попеременное переключение то на одну, то на другую задачу. </p>
-<pre><code>import threading
-import time
+        <p><h2 id="fastapi-docker">Упаковка FastAPI приложения в Docker, Работа с источниками данных и Очереди</h2>
+<p>В рамках данного задания были взяты FastAPI приложение (создано в рамках лабораторной работы номер 1), база данных (аналогично создано в рамках лабораторной работы номер 1) и парсера данных (создано в рамках лабораторной работы номер 2)</p>
+<p>Сам Docker файл:</p>
+<pre><code>FROM python:3.11-slim
 
-def partial_sum(start, end, result, index):
-    result[index] = sum(range(start, end))
+WORKDIR /app
 
-def calculate_sum():
-    num_threads = 4
-    maximum = 10**9
-    step = maximum // num_threads
-    threads = []
-    results = [0] * num_threads
-    for i in range(num_threads):
-        start = i * step + 1
-        if i != num_threads - 1:
-            end = (i + 1) * step + 1
-        else:
-            end = maximum + 1
-        t = threading.Thread(target=partial_sum, args=(start, end, results, i))
-        threads.append(t)
-        t.start()
-    for t in threads:
-        t.join()
-    return sum(results)
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY ./app ./app
+COPY .env .
+
+EXPOSE 8000
+
+CMD [&quot;uvicorn&quot;, &quot;app.main:app&quot;, &quot;--host&quot;, &quot;0.0.0.0&quot;, &quot;--port&quot;, &quot;8000&quot;]
 </code></pre>
-<p>В результате получаем:</p>
-<p><img alt="Alt текст" src="../images/6.png" /></p>
-<p>2.Multiprocessing. Вычисления идут параллельно</p>
-<pre><code>import multiprocessing
-import time
+<p>Файл docker-compose.yml</p>
+<pre><code>version: &quot;3.9&quot;
 
-def partial_sum(start, end, result, index):
-    result[index] = sum(range(start, end))
+services:
 
-def calculate_sum():
-    num_processes = multiprocessing.cpu_count()
-    maximum = 10**9
-    step = maximum // num_processes
-    manager = multiprocessing.Manager()
-    processes = []
-    results = manager.list([0] * num_processes)
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Masha1226
+      POSTGRES_DB: team_platform_db
+    ports:
+      - &quot;5433:5432&quot;
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
-    for i in range(num_processes):
-        start = i * step + 1
-        if i != num_processes - 1:
-            end = (i + 1) * step + 1
-        else:
-            end = maximum + 1
-        process = multiprocessing.Process(target=partial_sum, args=(start, end, results, i))
-        processes.append(process)
-        process.start()
+  web:
+    build: .
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - &quot;8000:8000&quot;
+    env_file:
+      - .env
+    environment:
+      DB_ADMIN: postgresql+psycopg2://postgres:Masha1226@db:5432/team_platform_db
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
 
-    for process in processes:
-        process.join()
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - &quot;5050:80&quot;
+    depends_on:
+      - db
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
 
-    return sum(results)
+volumes:
+  postgres_data:
+  pgadmin_data:
 </code></pre>
-<p>Сначала посомтрим на результаты при стандартном наборе входных параметров:
-<img alt="Alt текст" src="../images/7.png" /></p>
-<p>Далее в рамках этого подхода проведем небольшое исследование. Попробуем посомтреть на изменение работы кода при корректировке переменной num_processes, которая как раз-таки распределяет наш процесс на потоки.
-Начнем с 4х ядер:
-<img alt="Alt текст" src="../images/1.png" /></p>
-<p><img alt="Alt текст" src="../images/4.png" /></p>
-<p>А затем посмотрим на 8 ядер (максимальное количество):
-<img alt="Alt текст" src="../images/3.png" /></p>
+<p>Прокидываем 3 контейнера: для запуска бд, для инициализации pgadmin и для запуска приложения на FastAPI</p>
+<p>Далее реулизуем возможность вызова парсера по http. Для этого прокинем дополнительный эндпоинт</p>
+<pre><code>from fastapi import APIRouter
+from app.async_parser import run_parser
+from app.tasks import run_parser_task
+import asyncio
+
+parser_router = APIRouter()
+
+def sync_parser_runner():
+    asyncio.run(run_parser())
+
+
+@parser_router.post(&quot;/parse/matchtv&quot;, tags=['Parser'], status_code=202)
+def trigger_parser():
+    run_parser_task.delay()
+    return {&quot;message&quot;: &quot;&quot;}
+</code></pre>
+<p>Результат:</p>
+<p><img alt="Alt текст" src="../images/1.png" /></p>
+<p>Ну и подключим все руты в проиложении:</p>
+<pre><code>from fastapi import FastAPI
+from app.user_endpoints import user_router
+from app.team_platform_endpoints import team_platform_router
+from app.parser_endpoint import parser_router
+from app.connection import init_db
+
+app = FastAPI()
+app.include_router(user_router)
+app.include_router(team_platform_router)
+app.include_router(parser_router)
+
+
+@app.on_event(&quot;startup&quot;)
+def on_startup():
+    init_db()
+</code></pre>
+<p>Посмотрим, что происходит на стороне бд:</p>
 <p><img alt="Alt текст" src="../images/2.png" /></p>
-<p>Можно сразу заметить сильный разброс во времени и в суммарной нагрузке на ЦП. Увеличив величив num_processes с 4 до 8, мы задействовали все ядра (и производительности, и эффективности). Время работы сильно сократилось, а это значит, что наша задача хорошо масштабируется по ядрам и реально выигрывает при использоании multiprocessing.</p>
-<p>3.Asyncio</p>
-<pre><code>import asyncio
-import time
+<p>А теперь подключим Celery + Redis в стек. Нам необходимо:
+1. Создать работника</p>
+<pre><code>from celery import Celery
 
-async def partial_sum(start, end):
-    return sum(range(start, end))
+celery_app = Celery(
+    &quot;worker&quot;,
+    broker=&quot;redis://redis:6379/0&quot;,
+    backend=&quot;redis://redis:6379/0&quot;
+)
 
-async def calculate_sum():
-    num_tasks = 4
-    maximum = 10 ** 9
-    step = maximum // num_tasks
-    tasks = []
+celery_app.conf.task_routes = {
+    &quot;app.tasks.run_parser_task&quot;: {&quot;queue&quot;: &quot;parser&quot;}
+}
 
-    for i in range(num_tasks):
-        start = i * step + 1
-        if i != num_tasks - 1:
-            end = (i + 1) * step + 1
-        else:
-            end = maximum + 1
-        task = asyncio.create_task(partial_sum(start, end))
-        tasks.append(task)
-
-    results = await asyncio.gather(*tasks)
-    return sum(results)
+import app.tasks
 </code></pre>
-<p>В результате получаем:</p>
-<p><img alt="Alt текст" src="../images/5.png" /></p>
-<p>Теперь посомтрим на график распределения времени для каждого процесса при 10^9 и 4х потоках:</p>
-<p><img alt="Alt текст" src="../images/8.png" /></p>
-<h3 id="_3">Вывод:</h3>
-<p>Multiprocessing получился самым эффективным способом в рамках задачи. В Python есть ограничение, называемое GIL, которое мешает потокам работать одновременно. Но процессы в multiprocessing GIL не ограничивает, поэтому это круто работает для тяжёлых задач — типа вычислений, обработки видео или изображений. Также каждый процесс может параллельно использовать ядра процессора. В результате — значительное ускорение.</p>
-<p>Threadings занимает второе место. Достаточно медленный из-за GIL. Тут параллельности нет (и ускорения тоже), в итоге задачи исполняются по очереди.</p>
-<p>Async - третье место. Тут тоже идет последовательное исполнение, нет ускорения, ну и асинхронность в нашей задаче ничего не даёт, потому что нет операций, которые можно "ждать". </p></p>
+<ol>
+<li>Создать задачу для выполнения</li>
+</ol>
+<pre><code>from app.celery_worker import celery_app
+from app.async_parser import run_parser
+import asyncio
+
+
+@celery_app.task(name=&quot;app.tasks.run_parser_task&quot;)
+def run_parser_task():
+    print(&quot;Парсинг начат через Celery&quot;)
+    asyncio.run(run_parser())
+    print(&quot;Парсинг завершён через Celery&quot;)
+
+</code></pre>
+<ol>
+<li>Добавить эндпоинт для вызова</li>
+</ol>
+<pre><code>parser_router = APIRouter()
+
+
+def sync_parser_runner():
+    asyncio.run(run_parser())
+
+
+@parser_router.post(&quot;/parse/matchtv&quot;, tags=['Parser'], status_code=202)
+def trigger_parser():
+    run_parser_task.delay()
+    return {&quot;message&quot;: &quot;Парсинг запущен в фоне через Celery&quot;}
+</code></pre>
+<ol>
+<li>Отредактировать докер для вызова Celery и Redis</li>
+</ol>
+<pre><code>version: &quot;3.9&quot;
+
+services:
+
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - &quot;5433:5432&quot;
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  web:
+    build: .
+    restart: always
+    depends_on:
+      - db
+      - redis
+    ports:
+      - &quot;8000:8000&quot;
+    env_file:
+      - .env
+    environment:
+      DB_ADMIN: ${DB_ADMIN}
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - &quot;5050:80&quot;
+    depends_on:
+      - db
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
+  redis:
+    image: redis:7
+    ports:
+      - &quot;6379:6379&quot;
+
+  worker:
+    build: .
+    command: celery -A app.celery_worker.celery_app worker --loglevel=info -Q parser
+    depends_on:
+      - redis
+      - web
+    volumes:
+      - .:/app
+
+volumes:
+  postgres_data:
+  pgadmin_data:
+</code></pre>
+<p>В результате после запуска работа прошла успешно:</p>
+<p><img alt="Alt текст" src="../images/3.png" /></p>
+<p>Напоследок глянем на составляющие части докер контейнера:</p>
+<p><img alt="Alt текст" src="../images/4.png" /></p></p>
     </article>
 </section>
             <!-- endblock -->
